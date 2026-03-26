@@ -26,12 +26,19 @@ class NoteService {
       });
     });
   }
+
+  clearAll(callback) {
+    chrome.storage.local.set({ [this.storageKey]: [] }, () => {
+      callback();
+    });
+  }
 }
 
 document.addEventListener('DOMContentLoaded', function() {
   const noteService = new NoteService();
   const input = document.getElementById('note-input');
   const saveBtn = document.getElementById('save-btn');
+  const clearAllBtn = document.getElementById('clear-all-btn');
   const notesList = document.getElementById('notes-list');
 
   // Render notes in the UI with delete buttons
@@ -81,6 +88,17 @@ document.addEventListener('DOMContentLoaded', function() {
       noteService.addNote(note, () => {
         input.value = '';
         // Refresh the list after adding
+        noteService.getNotes(renderNotes);
+      });
+    }
+  });
+
+  // Clear All button click handler
+  clearAllBtn.addEventListener('click', function() {
+    if (window.confirm('Are you sure you want to clear all notes?')) {
+      noteService.clearAll(() => {
+        console.log('All notes cleared');
+        // Refresh the list after clearing
         noteService.getNotes(renderNotes);
       });
     }
