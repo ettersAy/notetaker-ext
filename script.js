@@ -34,18 +34,40 @@ document.addEventListener('DOMContentLoaded', function() {
   const saveBtn = document.getElementById('save-btn');
   const notesList = document.getElementById('notes-list');
 
-  // Render notes in the UI
+  // Render notes in the UI with delete buttons
   function renderNotes(notes) {
     notesList.innerHTML = '';
     notes.forEach((note, idx) => {
       const li = document.createElement('li');
       li.textContent = note;
-      li.dataset.idx = idx;
-      // Clicking a note deletes it
-      li.addEventListener('click', () => {
-        noteService.deleteNote(idx, renderNotes);
+
+      // Create delete button
+      const deleteBtn = document.createElement('button');
+      deleteBtn.textContent = 'Delete';
+      deleteBtn.style.marginLeft = '5px';
+      deleteBtn.style.cursor = 'pointer';
+      deleteBtn.addEventListener('click', event => {
+        event.stopPropagation(); // Prevent triggering li click
+        noteService.deleteNote(idx, () => {
+          console.log('Note deleted');
+          // Refresh the entire list by fetching fresh notes
+          noteService.getNotes(renderNotes);
+        });
       });
-      notesList.appendChild(li);
+
+      // Allow entire note to be edited maybe
+      li.addEventListener('click', () => {
+        if (event.target !== deleteBtn) {
+          // Optional: could start editing, but we just do nothing for now
+          console.log('Note clicked');
+        }
+      });
+
+      // Assemble elements
+      const noteContainer = document.createElement('span');
+      noteContainer.appendChild(deleteBtn);
+      noteContainer.appendChild(li);
+      notesList.appendChild(noteContainer);
     });
   }
 
@@ -58,6 +80,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (note) {
       noteService.addNote(note, () => {
         input.value = '';
+        // Refresh the list after adding
         noteService.getNotes(renderNotes);
       });
     }
