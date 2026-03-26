@@ -18,12 +18,24 @@
       margin: 5px 0;
       cursor: pointer;
     }
+    .clear-all-btn {
+      margin-top: 10px;
+      background-color: #f44336;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+    .clear-all-btn:hover {
+      background-color: #d32f2f;
+    }
 </style>
 </head>
 <body>
   <h3>NoteTaker</h3>
   <input type="text" id="note-input" placeholder="Enter note...">
   <button id="save-btn">Save</button>
+  <button id="clear-all-btn" class="clear-all-btn">Clear All</button>
   <ul id="notes-list"></ul>
   <script src="script.js" defer></script>
 </body>
