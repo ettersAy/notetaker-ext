@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const clearAllBtn = document.getElementById('clear-all-btn');
   const notesList = document.getElementById('notes-list');
 
-  // Render notes in the UI with delete buttons
+  // Render notes in the UI with delete and copy buttons
   function renderNotes(notes) {
     notesList.innerHTML = '';
     notes.forEach((note, idx) => {
@@ -62,9 +62,23 @@ document.addEventListener('DOMContentLoaded', function() {
         });
       });
 
+      // Create copy button
+      const copyBtn = document.createElement('button');
+      copyBtn.textContent = 'Copy';
+      copyBtn.style.marginLeft = '5px';
+      copyBtn.style.cursor = 'pointer';
+      copyBtn.addEventListener('click', event => {
+        event.stopPropagation(); // Prevent triggering li click
+        navigator.clipboard.writeText(note).then(() => {
+          console.log('Note copied to clipboard:', note);
+        }).catch(err => {
+          console.error('Failed to copy note: ', err);
+        });
+      });
+
       // Allow entire note to be edited maybe
       li.addEventListener('click', () => {
-        if (event.target !== deleteBtn) {
+        if (event.target !== deleteBtn && event.target !== copyBtn) {
           // Optional: could start editing, but we just do nothing for now
           console.log('Note clicked');
         }
@@ -72,8 +86,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
       // Assemble elements
       const noteContainer = document.createElement('span');
-      noteContainer.appendChild(deleteBtn);
       noteContainer.appendChild(li);
+      noteContainer.appendChild(copyBtn);
+      noteContainer.appendChild(deleteBtn);
       notesList.appendChild(noteContainer);
     });
   }
